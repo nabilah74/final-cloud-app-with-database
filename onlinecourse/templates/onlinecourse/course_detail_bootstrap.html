@@ -54,28 +54,32 @@
             <!-- <HINT> Use Bootstrap Collapse to hide exam first, more details could be found here
             https://www.w3schools.com/bootstrap4/bootstrap_collapse.asp-->
 
-            <!--
+            
+            {% block content %}
+<h1>Course Exam</h1>
+<button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#exam" aria-expanded="false" aria-controls="exam">
+  Show Exam
+</button>
+<div class="collapse" id="exam">
+  <form method="POST" action="{% url 'exam_submit' %}">
+    {% csrf_token %}
+    {% for question in questions %}
+      <h3>{{ question.text }}</h3>
+      {% for choice in question.choice_set.all %}
+        <div class="form-check">
+          <input class="form-check-input" type="radio" name="question{{ question.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}">
+          <label class="form-check-label" for="choice{{ choice.id }}">
+            {{ choice.text }}
+          </label>
+        </div>
+      {% endfor %}
+    {% endfor %}
+    <button type="submit" class="btn btn-primary mt-3">Submit Exam</button>
+  </form>
+</div>
+{% endblock %}
 
-            A collapse example here:
-            <div id="exam" class="collapse">
-                Click to expand elements within the collapse div
-                </div>
-
-            -->
-
-            <!-- <HINT> If user is authenticated, show course exam with a list of question -->
-
-            <!-- <HINT> Each example will have many questions -->
-
-            <!-- <HINT> Each question will have many choices -->
-
-
-            <!-- <HINT> Create a form to collect the selected choices for all questions -->
-            <!-- <HINT> For each question choice, you may create a checkbox input like
-            <input type="check" name="choice_{{choice.id}}" id="{{choice.id}}" ...>
-            -->
-
-            <!-- A choice submission form example
+            
             <form id="questionform" action="point to a submit view" method="post">
                         ... for each question in the course ...
                         <div class="card mt-1">
@@ -93,10 +97,7 @@
                             </div>
                         </div>
                     <input class="btn btn-success btn-block" type="submit" value="Submit">
-            </form> -->
-
-            <!--Check here to see more details Bootstrap checkbox
-             https://www.w3schools.com/bootstrap4/bootstrap_forms_inputs.asp-->
+            </form>
     </div>
 </body>
 </html>
