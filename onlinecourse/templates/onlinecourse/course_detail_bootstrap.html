@@ -77,63 +77,23 @@
         </div>
         {% endfor %}
       </div>
-      {% block content %}
-      <h1>Course Exam</h1>
-      <button
-        class="btn btn-primary"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#exam"
-        aria-expanded="false"
-        aria-controls="exam"
-      >Show Exam</button>
+      <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#exam" aria-expanded="false" aria-controls="exam">Show Exam</button>
       <div class="collapse" id="exam">
-        <form method="POST" action="{% url 'enroll' course_id=course.id %}">
-          {% csrf_token %} {% for question in questions %}
+        <h1>Course Exam</h1>
+        <form id="questionform" method="POST" action="{% url 'onlinecourse:submit' course.id %}">
+          {% csrf_token %} 
+          {% for question in course.question_set.all %}
           <h3>{{ question.text }}</h3>
-          {% for choice in question.choice_set.all %}
-          <div class="form-check">
-            <input
-              class="form-check-input"
-              type="radio"
-              name="question{{ question.id }}"
-              id="choice{{ choice.id }}"
-              value="{{ choice.id }}"
-            />
-            <label class="form-check-label" for="choice{{ choice.id }}">
-              {{ choice.content }}
-            </label>
-          </div>
-          {% endfor %} {% endfor %}
-          <button type="submit" class="btn btn-primary mt-3">
-            Submit Exam
-          </button>
+            {% for choice in question.choice_set.all %}
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="question{{ question.id }}" id="choice{{ choice.id }}" value="{{ choice.id }}"/>
+              <label class="form-check-label" for="choice{{ choice.id }}">{{ choice.content }}</label>
+            </div>
+            {% endfor %} 
+          {% endfor %}
+          <button  class="btn btn-success btn-block" type="submit" value="Submit">Submit Exam</button>
         </form>
       </div>
-      {% endblock %}
-
-      <form id="questionform" action="point to a submit view" method="post">
-        ... for each question in the course ...
-        <div class="card mt-1">
-          <div class="card-header"><h5>{{ question.text}}</h5></div>
-          {% csrf_token %}
-          <div class="form-group">
-            ... for each choice in the question ...
-            <div class="form-check">
-              <label class="form-check-label">
-                <input
-                  type="checkbox"
-                  name="choice_{{choice.id}}"
-                  class="form-check-input"
-                  id="{{choice.id}}"
-                  value="{{choice.id}}"
-                />{{ choice.content }}
-              </label>
-            </div>
-          </div>
-        </div>
-        <input class="btn btn-success btn-block" type="submit" value="Submit" />
-      </form>
     </div>
   </body>
 </html>

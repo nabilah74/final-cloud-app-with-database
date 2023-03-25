@@ -120,13 +120,13 @@ def extract_answers(request):
             submitted_anwsers.append(choice_id)
     return submitted_anwsers
 
+
 def submit(request, course_id):
-    user = request.user
-    course = get_object_or_404(Course, pk=course_id)
-    enrollment = Enrollment.objects.get(user=user, course=course)
-    submission = Submission.objects.create(enrollment = enrollment)
-    choices = extract_answers(request)
-    return redirect('show_exam_result', submission_id=submission.id)
+    if request.method == 'POST':
+        enrollment = Enrollment.objects.get(user=request.user, course=course_id)
+        choices = extract_answers(request)
+        submission = Submission.objects.create(enrollment=enrollment, answers=choices)
+        return redirect('show_exam_result', submission_id=submission.id)
 
 # <HINT> Create an exam result view to check if learner passed exam and show their question results and result for each question,
 # you may implement it based on the following logic:
