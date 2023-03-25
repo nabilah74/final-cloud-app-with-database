@@ -64,8 +64,9 @@ class Course(models.Model):
     is_enrolled = False
 
     def __str__(self):
-        return "Name: " + self.name + "," + \
-               "Description: " + self.description
+        return self.name
+        # return "Name: " + self.name + "," + \
+        #        "Description: " + self.description
 
 
 # Lesson model
@@ -101,16 +102,30 @@ class Enrollment(models.Model):
     # Has a grade point for each question
     # Has question content
     # Other fields and methods you would like to design
-class Question(models.Model):
-    # Foreign key to lesson
-    lesson_ID = models.ForeignKey(Lesson, on_delete=models.CASCADE)
+#class Question(models.Model):
+    # Foreign key to course
     # question text
-    text = models.CharField(max_length=1000)
     # question grade/mark
-    grade = models.IntegerField(default=0)
 
     # <HINT> A sample model method to calculate if learner get the score of the question
-    def is_get_score(self, selected_ids):
+    #def is_get_score(self, selected_ids):
+    #    all_answers = self.choice_set.filter(is_correct=True).count()
+    #    selected_correct = self.choice_set.filter(is_correct=True, id__in=selected_ids).count()
+    #    if all_answers == selected_correct:
+    #        return True
+    #    else:
+    #        return False
+
+
+class Question(models.Model):
+    course = models.ForeignKey(Course, on_delete=models.CASCADE)
+    question_text = models.TextField(default='Question text...')
+    grade = models.IntegerField(default=0)
+
+    def __str__(self):
+        return self.course.name + ' - ' + self.question_text
+
+    def is_get_score(self, selected_ids):  # check whether user get score of the question by making the correct choice
         all_answers = self.choice_set.filter(is_correct=True).count()
         selected_correct = self.choice_set.filter(is_correct=True, id__in=selected_ids).count()
         if all_answers == selected_correct:
@@ -125,15 +140,21 @@ class Question(models.Model):
     # Choice content
     # Indicate if this choice of the question is a correct one or not
     # Other fields and methods you would like to design
+
 class Choice(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    content = models.CharField(max_length=1000)
-    isCorrect = models.BooleanField()
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)  # 1 question - many choices
+    choice_text = models.TextField(default='Choice text...')
+    is_correct = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.question.question_text + ' - ' + self.choice_text
+
 
 # <HINT> The submission model
 # One enrollment could have multiple submission
 # One submission could have multiple choices
 # One choice could belong to multiple submissions
+
 class Submission(models.Model):
-    enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
-    choices = models.ManyToManyField(Choice)
+   enrollment = models.ForeignKey(Enrollment, on_delete=models.CASCADE)
+   choices = models.ManyToManyField(Choice) # one submission contained many choices
