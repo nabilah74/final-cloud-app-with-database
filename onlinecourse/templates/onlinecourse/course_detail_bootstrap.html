@@ -55,13 +55,13 @@
             https://www.w3schools.com/bootstrap4/bootstrap_collapse.asp-->
 
             
-            {% block content %}
+{% block content %}
 <h1>Course Exam</h1>
 <button class="btn btn-primary" type="button" data-bs-toggle="collapse" data-bs-target="#exam" aria-expanded="false" aria-controls="exam">
   Show Exam
 </button>
 <div class="collapse" id="exam">
-  <form method="POST" action="{% url 'exam_submit' %}">
+  <form method="POST" action="{% url 'submit' %}">
     {% csrf_token %}
     {% for question in questions %}
       <h3>{{ question.text }}</h3>
