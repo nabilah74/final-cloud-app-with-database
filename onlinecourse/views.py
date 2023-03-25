@@ -134,7 +134,29 @@ def submit(request, course_id):
         # Get the selected choice ids from the submission record
         # For each selected choice, check if it is a correct answer or not
         # Calculate the total score
-#def show_exam_result(request, course_id, submission_id):
+def show_exam_result(request, course_id, submission_id):
+    course = get_object_or_404(Course, pk=course_id)
+    submission = get_object_or_404(Submission, pk = submission_id)
+    selected_ids = submission.choices.values_list('id', flat=True)
+    # Check if each selected choice is correct or not
+    total_score = 0
+    for choice_id in selected_ids:
+        choice = get_object_or_404(Choice, id=choice_id)
+        if choice.isCorrect:
+            total_score += choice.question.grade
+    
+    # Calculate the total possible score
+    total_possible_score = course.questions.aggregate(models.Sum('grade'))['grade__sum']
+    
+    # Add the course, selected_ids, and grade to context for rendering HTML page
+    context = {
+        'course': course,
+        'selected_ids': selected_ids,
+        'grade': total_score,
+        'total_possible_score': total_possible_score,
+    }
+    
+    return render(request, 'exam_result.html', context)
 
 
 

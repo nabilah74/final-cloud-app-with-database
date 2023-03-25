@@ -39,17 +39,25 @@
     {% if grade > 80 %}
     <div class="alert alert-success">
        <!--HINT Display passed info -->
+       <h4>Congratulations, {{user.name}}, You have passed the exam and completed the course with score {{context.grade}}</h4>
     </div>
-        {% else %}
-        <div class="alert alert-danger">
-            <!--HINT Display failed info -->
-        </div>
-        <a class="btn btn-link text-danger" href="{% url 'onlinecourse:course_details' course.id %}">Re-test</a>
-        {% endif %}
-        <div class="card-columns-vertical mt-1">
-        <h5 class="">Exam results</h5>
-            <!--HINT Display exam results-->
-        </div>
+    {% else %}
+    <div class="alert alert-danger">
+        <h4>Failed Sorry, {{user.name}}! You have failed the exam with score {{context.grade}}</h4>
+    </div>
+    <a class="btn btn-link text-danger" href="{% url 'onlinecourse:course_details' course.id %}">Re-test</a>
+    {% endif %}
+    <div class="card-columns-vertical mt-1">
+    <h5 class="">Exam results</h5>
+    <div class="card-body">
+            {% for choice in context.selected_ids %}
+              <h2>{{ choice.question.text }}</h2>
+              <h4>{{ choice.content }}</h4>
+              <h4>{% if choice.isCorrect %}<span class="badge badge-success">Correct Answer</span>{% else %}<span class="badge badge-danger">Incorrect</span>{% endif %}</h4>
+              <h4>{{ choice.question.grade }}</h4>
+            {% endfor %}
+      </div>
+    </div>
     </div>
 </body>
 </html>
